@@ -1,5 +1,5 @@
 import bufferGenerator from '../utils/bufferGenerator.js';
-import TryCatch from '../utils/tryCatch.js';
+import TryCatch from '../utils/TryCatch.js';
 import cloudinary from 'cloudinary';
 import Product from '../models/product.js';
 

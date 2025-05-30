@@ -1,7 +1,7 @@
 import bufferGenerator from '../utils/bufferGenerator.js';
 import TryCatch from '../utils/TryCatch.js';
 import cloudinary from 'cloudinary';
-import Product from '../models/product.js';
+import Product from '../models/Product.js';
 
 export const createProduct = TryCatch(async (req, res) => {
      if (req.user.role !== "admin")

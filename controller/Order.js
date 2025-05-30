@@ -3,6 +3,7 @@ import TryCatch from "../utils/TryCatch.js";
 import Order from "../models/Order.js";
 import Product from "../models/Product.js";
 import sendOrderConfirmation from "../utils/sendOrderConfirmation.js";
+import sendOrderStatusUpdate from "../utils/sendOrderStatusUpdate.js";
 import Stripe from 'stripe'
 
 export const newOrderCod = TryCatch(async (req, res) => {
@@ -108,7 +109,13 @@ export const updateStatus = TryCatch(async (req, res) => {
     });
   }
 
-  const order = await Order.findById(req.params.id);
+  // Find and populate order, user, and products in one query
+  const order = await Order.findById(req.params.id)
+    .populate("user") // to access user.email
+    .populate({
+      path: "items.product",
+      select: "title price",
+    });
 
   if (!order) {
     return res.status(404).json({
@@ -117,9 +124,27 @@ export const updateStatus = TryCatch(async (req, res) => {
   }
 
   const { status } = req.body;
-
   order.status = status;
   await order.save();
+
+  if (status === "Shipped" || status === "Delivered") {
+    console.log(`Triggering email for status: ${status}`);
+
+    const formattedItems = order.items.map((item) => ({
+      name: item.product?.title || "Unknown Product",
+      price: item.product?.price || 0,
+      quantity: item.quantity,
+    }));
+
+    await sendOrderStatusUpdate({
+      email: order.user.email,
+      subject: `Your order has been ${status}`,
+      orderId: order._id,
+      products: formattedItems,
+      totalAmount: order.subTotal,
+      status,
+    });
+  }
 
   res.json({
     message: "Order status updated successfully",

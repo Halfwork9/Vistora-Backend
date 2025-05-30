@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import connectDb from './utils/db.js';
 import cloudinary from 'cloudinary';
 import cors from "cors";
-import axois from "axios";
+import axios from "axios";
 
 dotenv.config();
 
@@ -22,10 +22,10 @@ function reloadWebsite() {
   axios
     .get(url)
     .then((response) => {
-      console.log("website reloded");
+      console.log("Website reloaded");
     })
     .catch((error) => {
-      console.error(`Error : ${error.message}`);
+      console.error(`Error: ${error.message}`);
     });
 }
 

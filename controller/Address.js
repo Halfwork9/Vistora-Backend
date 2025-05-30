@@ -1,5 +1,5 @@
 import Address from "../models/Address.js";
-import TryCatch from "../utils/tryCatch.js";
+import TryCatch from "../utils/TryCatch.js";
 
 export const addAddress = TryCatch(async (req, res) => {
 
